@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apple TV Style Hero Trailer Demo</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(255,255,255,0.06);
+      --panel-strong: rgba(255,255,255,0.12);
+      --text: #f5f7fb;
+      --muted: #a8b2c5;
+      --accent: #7c8cff;
+      --accent-2: #93a1ff;
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(124,140,255,0.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(77,208,225,0.12), transparent 22%),
+        linear-gradient(180deg, #08111d 0%, #0b1626 100%);
+      overflow-x: hidden;
+    }
+
+    .app {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-mark {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), #4de0e8);
+      box-shadow: 0 0 18px rgba(124,140,255,0.55);
+    }
+
+    .top-links {
+      display: flex;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 74vh;
+      border-radius: 28px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .hero-video,
+    .hero-video iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .hero-fade {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(6,10,18,0.88) 0%, rgba(6,10,18,0.72) 26%, rgba(6,10,18,0.28) 48%, rgba(6,10,18,0.18) 100%),
+        linear-gradient(0deg, rgba(6,10,18,0.96) 0%, rgba(6,10,18,0.22) 40%, rgba(6,10,18,0.02) 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: 74vh;
+      padding: 42px;
+      gap: 24px;
+    }
+
+    .meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #dfe6f8;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+    }
+
+    .title-block {
+      max-width: 560px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(36px, 5vw, 68px);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+      text-wrap: balance;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+      max-width: 520px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: #f5f7fb;
+      color: #0c1220;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.10);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+    }
+
+    .carousel-wrap {
+      position: relative;
+      z-index: 2;
+      margin-top: 6px;
+    }
+
+    .carousel-label {
+      color: #dfe6f8;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: 0.02em;
+    }
+
+    .carousel {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(220px, 1fr);
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: none;
+    }
+
+    .carousel::-webkit-scrollbar { display: none; }
+
+    .card {
+      position: relative;
+      min-height: 130px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.24);
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.22);
+    }
+
+    .card.active {
+      border-color: rgba(147,161,255,0.8);
+      box-shadow: 0 12px 28px rgba(124,140,255,0.22);
+    }
+
+    .card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(6,10,18,0.9), rgba(6,10,18,0.18));
+    }
+
+    .card-copy {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      z-index: 2;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      font-size: 12px;
+      color: #c0c9d8;
+    }
+
+    .hint-bar {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .state {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    @media (max-width: 900px) {
+      .app { padding: 18px; }
+      .hero, .hero-content { min-height: 82vh; }
+      .hero-content { padding: 24px; }
+      .carousel {
+        grid-auto-columns: 78%;
+      }
+      .hint-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div>Trailer Hero Demo</div>
+      </div>
+      <div class="top-links">
+        <span>Muted autoplay</span>
+        <span>Focus swap</span>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="hero-video" id="heroVideo"></div>
+      <div class="hero-fade"></div>
+
+      <div class="hero-content">
+        <div class="meta-chip" id="metaChip">Featured Trailer</div>
+
+        <div class="title-block">
+          <h1 id="heroTitle">Loading...</h1>
+          <p class="subtitle" id="heroSubtitle">Select a title below to swap the hero trailer just like an Apple TV style home screen.</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary">Play Title</button>
+          <button class="btn btn-secondary">More Info</button>
+        </div>
+
+        <div class="carousel-wrap">
+          <div class="carousel-label">Up Next</div>
+          <div class="carousel" id="carousel"></div>
+        </div>
+
+        <div class="hint-bar">
+          <div>Demo idea: native carousel UI + official YouTube trailer in the hero area.</div>
+          <div class="state" id="stateText">Ready</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const items = [
+      {
+        title: "Dune: Part Two",
+        subtitle: "Muted autoplay hero trailer with cinematic backdrop and focus-driven swap.",
+        videoId: "Way9Dexny3w",
+        art: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=80",
+        chip: "Sci-Fi Epic"
+      },
+      {
+        title: "The Batman",
+        subtitle: "A dark, premium hero state that changes as the focused title changes.",
+        videoId: "mqqft2x_Aa4",
+        art: "https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?auto=format&fit=crop&w=1200&q=80",
+        chip: "Crime / Action"
+      },
+      {
+        title: "Top Gun: Maverick",
+        subtitle: "Trailer lives in the hero area while the carousel stays clean and app-like.",
+        videoId: "qSqVVswa420",
+        art: "https://images.unsplash.com/photo-1474302770737-173ee21bab63?auto=format&fit=crop&w=1200&q=80",
+        chip: "Adventure"
+      },
+      {
+        title: "Avatar: The Way of Water",
+        subtitle: "This layout is ideal for TV launch screens and media home pages.",
+        videoId: "d9MyW72ELq0",
+        art: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+        chip: "Fantasy"
+      }
+    ];
+
+    const heroVideo = document.getElementById('heroVideo');
+    const heroTitle = document.getElementById('heroTitle');
+    const heroSubtitle = document.getElementById('heroSubtitle');
+    const metaChip = document.getElementById('metaChip');
+    const carousel = document.getElementById('carousel');
+    const stateText = document.getElementById('stateText');
+
+    function getEmbedUrl(videoId) {
+      const params = new URLSearchParams({
+        autoplay: '1',
+        mute: '1',
+        controls: '0',
+        rel: '0',
+        modestbranding: '1',
+        playsinline: '1',
+        loop: '1',
+        playlist: videoId,
+        enablejsapi: '1'
+      });
+      return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+    }
+
+    function renderHero(item, index) {
+      heroTitle.textContent = item.title;
+      heroSubtitle.textContent = item.subtitle;
+      metaChip.textContent = item.chip;
+      stateText.textContent = `Showing trailer ${index + 1} of ${items.length}`;
+
+      heroVideo.innerHTML = `
+        <iframe
+          src="${getEmbedUrl(item.videoId)}"
+          title="${item.title} trailer"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      `;
+
+      document.querySelectorAll('.card').forEach((card, i) => {
+        card.classList.toggle('active', i === index);
+      });
+    }
+
+    function renderCarousel() {
+      carousel.innerHTML = '';
+
+      items.forEach((item, index) => {
+        const card = document.createElement('button');
+        card.className = 'card';
+        card.type = 'button';
+        card.innerHTML = `
+          <img src="${item.art}" alt="${item.title} backdrop">
+          <div class="card-overlay"></div>
+          <div class="card-copy">
+            <div class="card-title">${item.title}</div>
+            <div class="card-sub">Play trailer in hero</div>
+          </div>
+        `;
+
+        card.addEventListener('mouseenter', () => renderHero(item, index));
+        card.addEventListener('focus', () => renderHero(item, index));
+        card.addEventListener('click', () => renderHero(item, index));
+
+        carousel.appendChild(card);
+      });
+    }
+
+    renderCarousel();
+    renderHero(items[0], 0);
+  </script>
+</body>
+</html>
